@@ -11,7 +11,8 @@ A cross-platform java application for decoding, monitoring, recording and stream
 
 > **This is a fork of [DSheirer/sdrtrunk](https://github.com/DSheirer/sdrtrunk) that adds PlutoSDR support** (ADALM-Pluto
 > and Pluto-compatible boards such as the PlutoSky).  See [PlutoSDR support](#plutosdr-support-this-fork) below.
-> Everything else is upstream sdrtrunk.  The Pluto changes are on the `pluto-tuner` branch.
+> Everything else is upstream sdrtrunk.  The Pluto changes are on the `pluto-tuner` branch (this fork's default
+> branch).  **Work in progress.**
 
 > ## 📖 [Read the sdrtrunk User Manual](https://github.com/DSheirer/sdrtrunk/wiki/User-Manual)
 > New to sdrtrunk? Start with the **[Getting Started](https://github.com/DSheirer/sdrtrunk/wiki/Getting-Started)** guide,
@@ -31,7 +32,7 @@ A cross-platform java application for decoding, monitoring, recording and stream
 
 ## PlutoSDR support (this fork)
 This fork adds a receive-only tuner for the ADALM-Pluto and Pluto-compatible AD936x boards, using
-[libiio](https://github.com/analogdevicesinc/libiio) 0.25.
+[libiio](https://github.com/analogdevicesinc/libiio) 0.25.  It's a work in progress: see what's been tested below.
 
 * **USB:** a Pluto plugged into USB appears in the tuner list and starts automatically, like the other USB tuners.
 * **Network:** use **Add Network Tuner**, choose **PlutoSDR (libiio)** and enter the board's address (e.g. 192.168.2.1).
@@ -49,8 +50,24 @@ Requirements:
   [PlutoSDR-M2k-USB-Drivers.exe](https://github.com/analogdevicesinc/plutosdr-m2k-drivers-win/releases).
   Linux: the Pluto udev rules (`53-adi-plutosdr-usb.rules`).
 
-Tested on a PlutoSky 7020 (AD9361, firmware v0.38) over USB 2.0 on Windows 10.  This is not an official sdrtrunk
-release: please report Pluto problems on this fork, not to the sdrtrunk project.
+Running it (there's no release build yet): install a JDK 27 that includes JavaFX, such as the Bellsoft Liberica
+JDK 27 "Full" package, then run `./gradlew run`.  On Windows, double-click `run-sdrtrunk.bat`, which uses the JDK in
+the `SDRTRUNK_JDK` environment variable or in `%USERPROFILE%\.jdks\jdk-27-full` when it's there.
+
+Tips:
+* Connect the antenna to **RX1**.  Some cases have the TX1/RX1 labels swapped, so check the label on the board.
+* Use manual gain for trunked systems (around 40 to 60 dB), rather than the AGC.
+* VHF (around 150 MHz) needs a longer antenna than the short telescopic ones sold with these boards: a quarter wave
+  at 150 MHz is about 50 cm.
+
+Tested on a PlutoSky 7020 (AD9361, firmware v0.38) over USB 2.0 on Windows 10:
+* 2.5 and 5 MHz sample rates, sustained without dropped samples.
+* A P25 Phase 1 simulcast system (LSM) at 770 MHz, including its Phase 1 and Phase 2 (TDMA) traffic channels.
+* The C4FM control channel of a P25 Phase 2 system at VHF (142 MHz).
+
+Not tested yet: sample rates above 5 MHz, a network (`ip:`) connection to a real board, long runs, Linux and macOS.
+
+This is not an official sdrtrunk release: please report Pluto problems on this fork, not to the sdrtrunk project.
 
 ## MacOS Tahoe 26.1 Users - Attention
 Changes to USB support in Tahoe version 26.x cause sdrtrunk to fail to launch.  Do the following to install the latest libusb and create a symbolic link and then use the nightly build which includes an updated usb4java native library for Tahoe with ARM processor.  There may still be issue(s) with MacOS accessing your USB SDR tuners.
