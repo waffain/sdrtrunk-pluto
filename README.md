@@ -9,6 +9,10 @@
 # sdrtrunk
 A cross-platform java application for decoding, monitoring, recording and streaming trunked mobile and related radio protocols using Software Defined Radios (SDR).
 
+> **This is a fork of [DSheirer/sdrtrunk](https://github.com/DSheirer/sdrtrunk) that adds PlutoSDR support** (ADALM-Pluto
+> and Pluto-compatible boards such as the PlutoSky).  See [PlutoSDR support](#plutosdr-support-this-fork) below.
+> Everything else is upstream sdrtrunk.  The Pluto changes are on the `pluto-tuner` branch.
+
 > ## 📖 [Read the sdrtrunk User Manual](https://github.com/DSheirer/sdrtrunk/wiki/User-Manual)
 > New to sdrtrunk? Start with the **[Getting Started](https://github.com/DSheirer/sdrtrunk/wiki/Getting-Started)** guide,
 > then use the **[User Manual](https://github.com/DSheirer/sdrtrunk/wiki/User-Manual)** and
@@ -24,6 +28,29 @@ A cross-platform java application for decoding, monitoring, recording and stream
 
 ![sdrtrunk primary application window decoding a P25 trunked radio system](https://github.com/DSheirer/sdrtrunk/wiki/images/application_overview.png)
 **Figure 1:** sdrtrunk decoding a P25 Phase 1 simulcast trunked radio system
+
+## PlutoSDR support (this fork)
+This fork adds a receive-only tuner for the ADALM-Pluto and Pluto-compatible AD936x boards, using
+[libiio](https://github.com/analogdevicesinc/libiio) 0.25.
+
+* **USB:** a Pluto plugged into USB appears in the tuner list and starts automatically, like the other USB tuners.
+* **Network:** use **Add Network Tuner**, choose **PlutoSDR (libiio)** and enter the board's address (e.g. 192.168.2.1).
+  The port is optional (iiod's default is 30431).
+* **Settings:** frequency, sample rate (2.5 to 10 MHz), manual gain or the AD936x AGC modes.  USB 2.0 sustains about
+  5 MHz; higher rates may drop samples.
+* **Receive only:** the transmit side is never used, and the transmit LO is powered down while the tuner runs (and
+  restored when it stops), so nothing leaks through an external transmit amplifier.
+
+Requirements:
+* libiio **0.25** (not 1.x): on Windows, `libiio-0.25.gb6028fd-setup.exe` from the
+  [libiio v0.25 release](https://github.com/analogdevicesinc/libiio/releases/tag/v0.25); on Linux, the `libiio0`
+  package.  A different location can be given with `-Dlibiio.library.path=<libiio file or directory>`.
+* Windows: the Pluto USB driver,
+  [PlutoSDR-M2k-USB-Drivers.exe](https://github.com/analogdevicesinc/plutosdr-m2k-drivers-win/releases).
+  Linux: the Pluto udev rules (`53-adi-plutosdr-usb.rules`).
+
+Tested on a PlutoSky 7020 (AD9361, firmware v0.38) over USB 2.0 on Windows 10.  This is not an official sdrtrunk
+release: please report Pluto problems on this fork, not to the sdrtrunk project.
 
 ## MacOS Tahoe 26.1 Users - Attention
 Changes to USB support in Tahoe version 26.x cause sdrtrunk to fail to launch.  Do the following to install the latest libusb and create a symbolic link and then use the nightly build which includes an updated usb4java native library for Tahoe with ARM processor.  There may still be issue(s) with MacOS accessing your USB SDR tuners.
