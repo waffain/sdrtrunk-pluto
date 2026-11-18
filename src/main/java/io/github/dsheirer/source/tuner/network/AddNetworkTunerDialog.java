@@ -28,8 +28,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.github.dsheirer.preference.UserPreferences;
+import io.github.dsheirer.source.tuner.configuration.TunerConfiguration;
 import io.github.dsheirer.source.tuner.configuration.TunerConfigurationManager;
 import io.github.dsheirer.source.tuner.manager.DiscoveredNetworkTuner;
+import io.github.dsheirer.source.tuner.pluto.DiscoveredPlutoSdrTuner;
+import io.github.dsheirer.source.tuner.pluto.PlutoSdrTunerConfiguration;
+import io.github.dsheirer.source.tuner.pluto.PlutoSdrTunerController;
 import io.github.dsheirer.source.tuner.ui.DiscoveredTunerModel;
 
 import javax.swing.JButton;
@@ -42,6 +46,8 @@ import javax.swing.JTextField;
 
 public class AddNetworkTunerDialog extends JFrame {
   private final static Logger mLog = LoggerFactory.getLogger(AddNetworkTunerDialog.class);
+  private static final String TYPE_RTL_TCP = "rtl-tcp";
+  private static final String TYPE_PLUTOSDR = "PlutoSDR (libiio)";
   private UserPreferences mUserPreferences;
   private DiscoveredTunerModel mDiscoveredTunerModel;
   private TunerConfigurationManager mTunerConfigurationManager;
@@ -76,8 +82,9 @@ public class AddNetworkTunerDialog extends JFrame {
     mTypeLabel = new JLabel("Type:");
     content.add(mTypeLabel);
 
-    String[] options = { "rtl-tcp" };
+    String[] options = { TYPE_RTL_TCP, TYPE_PLUTOSDR };
     mTypeComboBox = new JComboBox<>(options);
+    mTypeComboBox.setToolTipText("PlutoSDR: enter the board's address (e.g. 192.168.2.1).  Port and frequency are optional.");
     content.add(mTypeComboBox, "span2,grow,wrap");
 
     mHostLabel = new JLabel("Host:");
@@ -107,6 +114,11 @@ public class AddNetworkTunerDialog extends JFrame {
     mAddButton = new JButton("Add");
     // mAddButton.setEnabled(false);
     mAddButton.addActionListener(e -> {
+
+      if (TYPE_PLUTOSDR.equals(mTypeComboBox.getSelectedItem())) {
+        addPlutoSdrTuner();
+        return;
+      }
 
       long frequency = getFrequency();
 
@@ -146,6 +158,52 @@ public class AddNetworkTunerDialog extends JFrame {
     content.add(mCancelButton, "grow,push");
 
     setContentPane(content);
+  }
+
+  /**
+   * Adds a PlutoSDR at the host address, using the libiio network URI (ip:host or ip:host:port).
+   */
+  private void addPlutoSdrTuner() {
+    String host = getHost() != null ? getHost().trim() : "";
+
+    if (host.isEmpty()) {
+      JOptionPane.showMessageDialog(AddNetworkTunerDialog.this, "Please provide the PlutoSDR address (e.g. 192.168.2.1)",
+          "Address Required", JOptionPane.ERROR_MESSAGE);
+      return;
+    }
+
+    long frequency = getFrequency();
+
+    if (frequency == 0) {
+      frequency = TunerConfiguration.DEFAULT_FREQUENCY;
+    }
+
+    if (frequency < 0 || frequency > PlutoSdrTunerController.MAXIMUM_TUNABLE_FREQUENCY_HZ) {
+      JOptionPane.showMessageDialog(AddNetworkTunerDialog.this, "Please provide a center frequency up to 6 GHz",
+          "Center Frequency", JOptionPane.ERROR_MESSAGE);
+      return;
+    }
+
+    String uri = "ip:" + host + (getPort() > 0 ? ":" + getPort() : "");
+
+    if (mDiscoveredTunerModel.getDiscoveredTuner(DiscoveredPlutoSdrTuner.getId(uri)) != null) {
+      JOptionPane.showMessageDialog(AddNetworkTunerDialog.this, "A PlutoSDR at [" + uri + "] has already been added",
+          "Duplicate Tuner", JOptionPane.ERROR_MESSAGE);
+      return;
+    }
+
+    mLog.info("Adding PlutoSDR network tuner - frequency [" + frequency + "] uri [" + uri + "]");
+
+    try {
+      PlutoSdrTunerConfiguration config = PlutoSdrTunerConfiguration.create(uri, frequency);
+      mTunerConfigurationManager.addTunerConfiguration(config);
+      mDiscoveredTunerModel.addDiscoveredTuner(new DiscoveredPlutoSdrTuner(config,
+          mUserPreferences.getTunerPreference().getChannelizerType()));
+    } catch (Exception ex) {
+      mLog.error("Error adding PlutoSDR network tuner", ex);
+    }
+
+    AddNetworkTunerDialog.this.setVisible(false);
   }
 
   private long getFrequency() {

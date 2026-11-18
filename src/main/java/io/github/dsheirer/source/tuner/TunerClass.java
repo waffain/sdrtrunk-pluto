@@ -33,6 +33,7 @@ public enum TunerClass
 	HACKRF("HackRF" ),
 	HYDRASDR("HydraSDR"),
 	LIMESDR("LimeSDR"),
+	PLUTOSDR("PlutoSDR"),
 	RTL2832("RTL-2832"),
 	RSP("RSP"),
 	TEST_TUNER("Test"),
@@ -58,7 +59,7 @@ public enum TunerClass
 	}
 
 	public static final EnumSet<TunerClass> SUPPORTED_USB_TUNERS = EnumSet.of(AIRSPY, AIRSPY_HF, BLADERF, HACKRF,
-			HYDRASDR, LIMESDR, RTL2832, FUNCUBE_DONGLE_PRO, FUNCUBE_DONGLE_PRO_PLUS);
+			HYDRASDR, LIMESDR, PLUTOSDR, RTL2832, FUNCUBE_DONGLE_PRO, FUNCUBE_DONGLE_PRO_PLUS);
 
 	public static final EnumSet<TunerClass> FUNCUBE_TUNERS = EnumSet.of(FUNCUBE_DONGLE_PRO, FUNCUBE_DONGLE_PRO_PLUS);
 
@@ -151,6 +152,8 @@ public enum TunerClass
 			case 0x1D506108: //LIMESDR-USB
 			case 0x0403601F: //LIMESDR MINI (FTDI FT601)
 				return LIMESDR;
+			case 0x0456B673: //ADALM-PLUTO AND PLUTO-COMPATIBLE BOARDS
+				return PLUTOSDR;
 			case 0x1D5060A1:
 				return AIRSPY;
 			case 0x03EB800C:

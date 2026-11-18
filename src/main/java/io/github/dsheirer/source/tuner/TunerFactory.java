@@ -63,6 +63,10 @@ import io.github.dsheirer.source.tuner.manager.TunerManager;
 import io.github.dsheirer.source.tuner.network.NetworkTunerConfiguration;
 import io.github.dsheirer.source.tuner.network.NetworkTunerDisabledEditor;
 import io.github.dsheirer.source.tuner.network.NetworkTunerEditor;
+import io.github.dsheirer.source.tuner.pluto.PlutoSdrTuner;
+import io.github.dsheirer.source.tuner.pluto.PlutoSdrTunerConfiguration;
+import io.github.dsheirer.source.tuner.pluto.PlutoSdrTunerController;
+import io.github.dsheirer.source.tuner.pluto.PlutoSdrTunerEditor;
 import io.github.dsheirer.source.tuner.recording.RecordingTunerConfiguration;
 import io.github.dsheirer.source.tuner.recording.RecordingTunerEditor;
 import io.github.dsheirer.source.tuner.rtl.RTL2832Tuner;
@@ -322,6 +326,8 @@ public class TunerFactory
                 return new HydraSdrTuner(new HydraSdrTunerController(bus, portAddress, tunerErrorListener), tunerErrorListener, channelizerType);
             case LIMESDR:
                 return new LimeSdrTuner(new LimeSdrTunerController(bus, portAddress, tunerErrorListener), tunerErrorListener, channelizerType);
+            case PLUTOSDR:
+                return new PlutoSdrTuner(new PlutoSdrTunerController(bus, portAddress, tunerErrorListener), tunerErrorListener, channelizerType);
             case RTL2832:
                 return new RTL2832Tuner(new RTL2832TunerController(bus, portAddress, tunerErrorListener), tunerErrorListener, channelizerType);
             default:
@@ -363,6 +369,8 @@ public class TunerFactory
                 return new HydraSdrTunerConfiguration(uniqueID);
             case LIMESDR:
                 return new LimeSdrTunerConfiguration(uniqueID);
+            case PLUTOSDR:
+                return new PlutoSdrTunerConfiguration(uniqueID);
             case RAFAELMICRO_R820T:
                 return new R820TTunerConfiguration(uniqueID);
             case RAFAELMICRO_R828D:
@@ -414,6 +422,8 @@ public class TunerFactory
                 return new HydraSdrTunerEditor(userPreferences, tunerManager, discoveredTuner);
             case LIMESDR:
                 return new LimeSdrTunerEditor(userPreferences, tunerManager, discoveredTuner);
+            case PLUTOSDR:
+                return new PlutoSdrTunerEditor(userPreferences, tunerManager, discoveredTuner);
             case RSP:
                 if(discoveredTuner instanceof DiscoveredRspTuner discoveredRspTuner)
                 {

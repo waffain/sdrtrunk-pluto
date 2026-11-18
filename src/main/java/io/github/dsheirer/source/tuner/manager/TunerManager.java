@@ -48,6 +48,8 @@ import io.github.dsheirer.source.tuner.channel.TunerChannelSource;
 import io.github.dsheirer.source.tuner.configuration.TunerConfiguration;
 import io.github.dsheirer.source.tuner.configuration.TunerConfigurationManager;
 import io.github.dsheirer.source.tuner.network.NetworkTunerConfiguration;
+import io.github.dsheirer.source.tuner.pluto.DiscoveredPlutoSdrTuner;
+import io.github.dsheirer.source.tuner.pluto.PlutoSdrTunerConfiguration;
 import io.github.dsheirer.source.tuner.recording.RecordingTunerConfiguration;
 import io.github.dsheirer.source.tuner.sdrplay.DiscoveredRspTuner;
 import io.github.dsheirer.source.tuner.sdrplay.rspDuo.DiscoveredRspDuoTuner1;
@@ -440,10 +442,12 @@ public class TunerManager implements IDiscoveredTunerStatusListener
     }
 
     /**
-     * Discover network (e.g. rtl_tcp) based tuners
+     * Discover network (e.g. rtl_tcp and PlutoSDR) based tuners
      */
     private void discoverNetworkTuners()
     {
+        discoverPlutoSdrNetworkTuners();
+
         List<TunerConfiguration> tunerConfigurations = getTunerConfigurationManager().getTunerConfigurations(TunerType.RTL_TCP);
 
         if(tunerConfigurations.size() > 0)
@@ -462,6 +466,26 @@ public class TunerManager implements IDiscoveredTunerStatusListener
                 discoveredNetworkTuner.setEnabled(false);
                 mLog.info("Tuner Added: " + discoveredNetworkTuner);
                 mDiscoveredTunerModel.addDiscoveredTuner(discoveredNetworkTuner);
+            }
+        }
+    }
+
+    /**
+     * Discover PlutoSDR tuners that the user added by network address.  The configurations of PlutoSDR tuners
+     * discovered on USB don't have a URI.
+     */
+    private void discoverPlutoSdrNetworkTuners()
+    {
+        ChannelizerType channelizerType = mUserPreferences.getTunerPreference().getChannelizerType();
+
+        for(TunerConfiguration tunerConfiguration: getTunerConfigurationManager().getTunerConfigurations(TunerType.PLUTOSDR))
+        {
+            if(tunerConfiguration instanceof PlutoSdrTunerConfiguration plutoConfiguration && plutoConfiguration.hasUri())
+            {
+                DiscoveredPlutoSdrTuner discoveredPlutoSdrTuner = new DiscoveredPlutoSdrTuner(plutoConfiguration, channelizerType);
+                discoveredPlutoSdrTuner.addTunerStatusListener(this);
+                mLog.info("Tuner Added: " + discoveredPlutoSdrTuner);
+                mDiscoveredTunerModel.addDiscoveredTuner(discoveredPlutoSdrTuner);
             }
         }
     }

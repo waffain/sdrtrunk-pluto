@@ -40,6 +40,7 @@ public enum TunerType
     HACKRF_RAD1O("RAD1O"),
     HYDRASDR_R828D("R828D"),
     LIMESDR("LimeSDR"),
+    PLUTOSDR("PlutoSDR"),
     RAFAELMICRO_R820T("R820T"),
     RAFAELMICRO_R828D("R828D"),
     RSP_1("RSP1"),
@@ -79,7 +80,7 @@ public enum TunerType
      * Supported USB tuner types
      */
     public static final EnumSet<TunerType> SUPPORTED_USB_TUNERS = EnumSet.of(AIRSPY_R820T, BLADERF, ELONICS_E4000, FITIPOWER_FC0012,
-            HACKRF_JAWBREAKER, HACKRF_RAD1O, HACKRF_ONE, HACKRF_PRO, HYDRASDR_R828D, LIMESDR, RAFAELMICRO_R820T);
+            HACKRF_JAWBREAKER, HACKRF_RAD1O, HACKRF_ONE, HACKRF_PRO, HYDRASDR_R828D, LIMESDR, PLUTOSDR, RAFAELMICRO_R820T);
 
     /**
      * Supported sound card tuner types

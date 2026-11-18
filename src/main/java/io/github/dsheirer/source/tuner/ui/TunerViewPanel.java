@@ -29,6 +29,7 @@ import io.github.dsheirer.source.tuner.manager.DiscoveredTuner;
 import io.github.dsheirer.source.tuner.manager.TunerManager;
 import io.github.dsheirer.source.tuner.manager.TunerStatus;
 import io.github.dsheirer.source.tuner.network.AddNetworkTunerDialog;
+import io.github.dsheirer.source.tuner.pluto.DiscoveredPlutoSdrTuner;
 import io.github.dsheirer.source.tuner.recording.AddRecordingTunerDialog;
 import java.awt.Color;
 import java.awt.Component;
@@ -115,7 +116,8 @@ public class TunerViewPanel extends JPanel
 
                     DiscoveredTuner selected = mDiscoveredTunerModel.getDiscoveredTuner(modelRow);
                     mDiscoveredTunerEditor.setItem(selected);
-                    getRemoveTunerButton().setEnabled(selected instanceof DiscoveredRecordingTuner || selected instanceof DiscoveredNetworkTuner);
+                    getRemoveTunerButton().setEnabled(selected instanceof DiscoveredRecordingTuner || selected instanceof DiscoveredNetworkTuner ||
+                            selected instanceof DiscoveredPlutoSdrTuner);
                 }
             }
         });
@@ -245,7 +247,8 @@ public class TunerViewPanel extends JPanel
                     int modelIndex = mTunerTable.convertRowIndexToModel(indexes[0]);
                     DiscoveredTuner selected = mDiscoveredTunerModel.getDiscoveredTuner(modelIndex);
 
-                    if(selected instanceof DiscoveredRecordingTuner || selected instanceof DiscoveredNetworkTuner)
+                    if(selected instanceof DiscoveredRecordingTuner || selected instanceof DiscoveredNetworkTuner ||
+                       selected instanceof DiscoveredPlutoSdrTuner)
                     {
                         mLog.info("Removing Tuner: " + selected);
                         selected.stop();

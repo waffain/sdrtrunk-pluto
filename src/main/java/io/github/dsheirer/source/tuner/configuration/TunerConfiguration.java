@@ -33,6 +33,7 @@ import io.github.dsheirer.source.tuner.hackrf.HackRFTunerConfiguration;
 import io.github.dsheirer.source.tuner.hydrasdr.HydraSdrTunerConfiguration;
 import io.github.dsheirer.source.tuner.limesdr.LimeSdrTunerConfiguration;
 import io.github.dsheirer.source.tuner.network.NetworkTunerConfiguration;
+import io.github.dsheirer.source.tuner.pluto.PlutoSdrTunerConfiguration;
 import io.github.dsheirer.source.tuner.recording.RecordingTunerConfiguration;
 import io.github.dsheirer.source.tuner.rtl.e4k.E4KTunerConfiguration;
 import io.github.dsheirer.source.tuner.rtl.fc0012.FC0012TunerConfiguration;
@@ -59,6 +60,7 @@ import io.github.dsheirer.source.tuner.sdrplay.RspTunerConfiguration;
         @JsonSubTypes.Type(value = HackRFTunerConfiguration.class, name = "hackRFTunerConfiguration"),
         @JsonSubTypes.Type(value = HydraSdrTunerConfiguration.class, name = "hydraSdrTunerConfiguration"),
         @JsonSubTypes.Type(value = LimeSdrTunerConfiguration.class, name = "limeSdrTunerConfiguration"),
+        @JsonSubTypes.Type(value = PlutoSdrTunerConfiguration.class, name = "plutoSdrTunerConfiguration"),
         @JsonSubTypes.Type(value = RecordingTunerConfiguration.class, name = "recordingTunerConfiguration"),
         @JsonSubTypes.Type(value = R820TTunerConfiguration.class, name = "r820TTunerConfiguration"),
         @JsonSubTypes.Type(value = R828DTunerConfiguration.class, name = "r828DTunerConfiguration"),
