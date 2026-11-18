@@ -178,6 +178,14 @@ class PlutoSdrTunerTest
     }
 
     @Test
+    void channelsAvoidTheCenterFrequency()
+    {
+        PlutoSdrTunerController controller = new PlutoSdrTunerController("ip:192.168.2.1", null);
+        assertTrue(controller.hasMiddleUnusableBandwidth());
+        assertEquals(PlutoSdrTunerController.DC_HALF_BANDWIDTH, controller.getMiddleUnusableHalfBandwidth());
+    }
+
+    @Test
     void maximumUsbRateDoesNotOverflow()
     {
         assertTrue(PlutoSdrSampleRate.RATE_10_0.getRate() * 32L <= Integer.MAX_VALUE);

@@ -96,6 +96,8 @@ public class PlutoSdrTunerController extends TunerController
     private static final long RF_BANDWIDTH_MINIMUM = 200_000;
     private static final long RF_BANDWIDTH_MAXIMUM = 56_000_000;
     private static final double USABLE_BANDWIDTH_PERCENT = 0.85;
+    //Channels are kept this far from the center frequency, where the residual DC offset is (same as the HackRF)
+    public static final int DC_HALF_BANDWIDTH = 5000;
     //Longer than the libiio timeout (5 seconds) so that a refill that doesn't respond to the cancel times out first
     private static final long STREAM_STOP_TIMEOUT_MS = 6000;
 
@@ -154,8 +156,8 @@ public class PlutoSdrTunerController extends TunerController
         mUri = uri;
         setMinimumFrequency(MINIMUM_TUNABLE_FREQUENCY_HZ);
         setMaximumFrequency(MAXIMUM_TUNABLE_FREQUENCY_HZ);
-        //The AD936x tracks and removes the DC offset, so the center of the spectrum is usable
-        setMiddleUnusableHalfBandwidth(0);
+        //The AD936x tracks and removes most of the DC offset, but a small spike remains at the center of the spectrum
+        setMiddleUnusableHalfBandwidth(DC_HALF_BANDWIDTH);
         setUsableBandwidthPercentage(USABLE_BANDWIDTH_PERCENT);
     }
 
